@@ -4,7 +4,6 @@ import asyncio
 import os
 import tempfile
 from distutils.dir_util import copy_tree
-import traceback
 from pathlib import PurePath
 import base64
 
@@ -61,7 +60,7 @@ class ServiceWrapper(PayloadType):
             with open(str(working_path), "rb") as f:
                 header = f.read(2)
                 if header == b"\x4d\x5a":  # checking for MZ header of PE files
-                    resp.message = "Supplied payload is a PE instead of raw shellcode."
+                    resp.build_stderr = "Supplied payload is a PE instead of raw shellcode."
                     return resp
             proc = await asyncio.create_subprocess_shell(
                 command,
@@ -85,10 +84,10 @@ class ServiceWrapper(PayloadType):
             if os.path.exists(output_path):
                 resp.payload = open(output_path, "rb").read()
                 resp.status = BuildStatus.Success
-                resp.message = "New Service Executable created!"
+                resp.build_message = "New Service Executable created!"
             else:
                 resp.payload = b""
-                resp.message = output + "\n" + output_path
+                resp.build_stderr = output + "\n" + output_path
         except Exception as e:
             raise Exception(str(e) + "\n" + output)
         return resp
