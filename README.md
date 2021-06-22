@@ -1,7 +1,7 @@
 # Service Wrapper
 The `service_wrapper` payload is a special payload. This is a .NET 3.5/4.0 service executable that acts as a "wrapper" around another agent. As such, this payload type has no commands and no supported C2 profiles - it simply acts as a way to turn arbitrary other agents into properly formatted Windows Service Executables.
 
-This payload type is for Mythic 2.2.6 and reports as version "7". It is not compatible with Mythic version 2.1.
+This payload type is for Mythic 2.2.7 and reports as version "8". It is not compatible with Mythic version 2.1.
 
 ## How to install an agent in this format within Mythic
 
