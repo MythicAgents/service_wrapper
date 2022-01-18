@@ -18,21 +18,21 @@ class ServiceWrapper(PayloadType):
     wrapped_payloads = []
     note = "This is a wrapper payload that takes in Raw shellcode and generates a .NET Service binary. The service does not perform any injection."
     supports_dynamic_loading = False
-    build_parameters = {
-        "version": BuildParameter(
+    build_parameters = [
+        BuildParameter(
             name="version",
             parameter_type=BuildParameterType.ChooseOne,
             description="Choose a target .NET Framework",
             choices=["3.5", "4.0"],
         ),
-        "arch": BuildParameter(
+        BuildParameter(
             name="arch",
             parameter_type=BuildParameterType.ChooseOne,
             choices=["x64", "Any CPU"],
             default_value="x64",
             description="Target architecture",
         )
-    }
+    ]
     c2_profiles = []
 
     async def build(self) -> BuildResponse:
