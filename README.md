@@ -17,3 +17,8 @@ Now, you might be wondering _when_ should you or a user do this to properly add 
 * Mythic is already up and going, but you want to minimize your steps, you can just install the agent and run `sudo ./mythic-cli mythic start`. That script will first _stop_ all of your containers, then start everything back up again. This will also bring in the new agent you just installed.
 * Mythic isn't running, you can install the script and just run `sudo ./mythic-cli mythic start`. 
 
+## Icon
+
+https://www.flaticon.com/free-icon/sweet_3050124
+
+<a href="https://www.flaticon.com/free-icons/sugar" title="sugar icons">Sugar icons created by Freepik - Flaticon</a>
