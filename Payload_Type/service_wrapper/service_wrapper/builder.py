@@ -1,5 +1,5 @@
-from mythic_payloadtype_container.PayloadBuilder import *
-from mythic_payloadtype_container.MythicCommandBase import *
+from mythic_container.PayloadBuilder import *
+from mythic_container.MythicCommandBase import *
 import asyncio
 import os
 import tempfile
@@ -24,6 +24,7 @@ class ServiceWrapper(PayloadType):
             parameter_type=BuildParameterType.ChooseOne,
             description="Choose a target .NET Framework",
             choices=["3.5", "4.0"],
+            default_value="4.0"
         ),
         BuildParameter(
             name="arch",
@@ -34,6 +35,10 @@ class ServiceWrapper(PayloadType):
         )
     ]
     c2_profiles = []
+    agent_path = PurePath(".") / "service_wrapper"
+    agent_icon_path = agent_path / "service_wrapper.svg"
+    agent_code_path = agent_path / "agent_code"
+
 
     async def build(self) -> BuildResponse:
         # this function gets called to create an instance of your payload
@@ -48,7 +53,7 @@ class ServiceWrapper(PayloadType):
             )
             agent_build_path = tempfile.TemporaryDirectory(suffix=self.uuid).name
             # shutil to copy payload files over
-            copy_tree(self.agent_code_path, agent_build_path)
+            copy_tree(str(self.agent_code_path), agent_build_path)
             working_path = (
                 PurePath(agent_build_path)
                 / "WindowsService1"
