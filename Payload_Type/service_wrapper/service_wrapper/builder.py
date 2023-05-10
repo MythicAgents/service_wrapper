@@ -1,11 +1,12 @@
-from mythic_payloadtype_container.PayloadBuilder import *
-from mythic_payloadtype_container.MythicCommandBase import *
+from mythic_container.PayloadBuilder import *
+from mythic_container.MythicCommandBase import *
 import asyncio
 import os
 import tempfile
 from distutils.dir_util import copy_tree
 from pathlib import PurePath
 import base64
+from mythic_container.MythicRPC import *
 
 
 class ServiceWrapper(PayloadType):
@@ -24,6 +25,7 @@ class ServiceWrapper(PayloadType):
             parameter_type=BuildParameterType.ChooseOne,
             description="Choose a target .NET Framework",
             choices=["3.5", "4.0"],
+            default_value="4.0"
         ),
         BuildParameter(
             name="arch",
@@ -34,6 +36,15 @@ class ServiceWrapper(PayloadType):
         )
     ]
     c2_profiles = []
+    agent_path = PurePath(".") / "service_wrapper"
+    agent_icon_path = agent_path / "service_wrapper.svg"
+    agent_code_path = agent_path / "agent_code"
+    build_steps = [
+        BuildStep(step_name="Gathering Files", step_description="Copying files to temp location"),
+        BuildStep(step_name="Checking", step_description="Checking for MZ header"),
+        BuildStep(step_name="Building", step_description="Compiling with nuget and msbuild")
+    ]
+
 
     async def build(self) -> BuildResponse:
         # this function gets called to create an instance of your payload
@@ -48,7 +59,7 @@ class ServiceWrapper(PayloadType):
             )
             agent_build_path = tempfile.TemporaryDirectory(suffix=self.uuid).name
             # shutil to copy payload files over
-            copy_tree(self.agent_code_path, agent_build_path)
+            copy_tree(str(self.agent_code_path), agent_build_path)
             working_path = (
                 PurePath(agent_build_path)
                 / "WindowsService1"
@@ -57,11 +68,29 @@ class ServiceWrapper(PayloadType):
             )
             with open(str(working_path), "wb") as f:
                 f.write(base64.b64decode(self.wrapped_payload))
+            await SendMythicRPCPayloadUpdatebuildStep(MythicRPCPayloadUpdateBuildStepMessage(
+                PayloadUUID=self.uuid,
+                StepName="Gathering Files",
+                StepStdout="Found all files for payload",
+                StepSuccess=True
+            ))
             with open(str(working_path), "rb") as f:
                 header = f.read(2)
                 if header == b"\x4d\x5a":  # checking for MZ header of PE files
                     resp.build_stderr = "Supplied payload is a PE instead of raw shellcode."
+                    await SendMythicRPCPayloadUpdatebuildStep(MythicRPCPayloadUpdateBuildStepMessage(
+                        PayloadUUID=self.uuid,
+                        StepName="Checking",
+                        StepStdout="Found leading MZ header - supplied file wasn't shellcode",
+                        StepSuccess=True
+                    ))
                     return resp
+            await SendMythicRPCPayloadUpdatebuildStep(MythicRPCPayloadUpdateBuildStepMessage(
+                PayloadUUID=self.uuid,
+                StepName="Checking",
+                StepStdout="No leading MZ header for payload",
+                StepSuccess=True
+            ))
             proc = await asyncio.create_subprocess_shell(
                 command,
                 stdout=asyncio.subprocess.PIPE,

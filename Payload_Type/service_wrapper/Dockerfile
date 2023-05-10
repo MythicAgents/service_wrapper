@@ -1,1 +1,5 @@
-FROM itsafeaturemythic/csharp_payload:0.1.1
+FROM itsafeaturemythic/mythic_python_dotnet:latest
+
+WORKDIR /Mythic/
+
+CMD ["python3", "main.py"]
