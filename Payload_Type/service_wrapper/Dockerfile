@@ -1,1 +1,1 @@
-FROM ghcr.io/mythicagents/service_wrapper:latest
+FROM ghcr.io/mythicagents/service_wrapper:v0.0.1-rc2
