@@ -1,5 +1,1 @@
-FROM itsafeaturemythic/mythic_python_dotnet:latest
-
-WORKDIR /Mythic/
-
-CMD ["python3", "main.py"]
+FROM ghcr.io/mythicagents/service_wrapper:v0.0.1-rc2
