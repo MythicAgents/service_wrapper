@@ -67,7 +67,7 @@ class ServiceWrapper(PayloadType):
                 / "loader.bin"
             )
             with open(str(working_path), "wb") as f:
-                f.write(base64.b64decode(self.wrapped_payload))
+                f.write(self.wrapped_payload)
             await SendMythicRPCPayloadUpdatebuildStep(MythicRPCPayloadUpdateBuildStepMessage(
                 PayloadUUID=self.uuid,
                 StepName="Gathering Files",
