@@ -98,13 +98,6 @@ jobs:
       - name: Lowercase the container image name
         run: echo "AGENT_IMAGE_NAME=${AGENT_IMAGE_NAME,,}" >> ${GITHUB_ENV}
 
-      # The Dockerfile which Mythic uses to pull in the base container image needs to be
-      # updated to reference the newly built container image
-      - name: Fix the server Dockerfile reference to reference the new release tag
-        working-directory: Payload_Type/service_wrapper
-        run: |
-          sed -i "s|^FROM ghcr\.io.*$|FROM ${REGISTRY}/${AGENT_IMAGE_NAME}:${VERSION}|" Dockerfile
-
       - name: Update package.json version
         uses: jossef/action-set-json-field@v2.1
         with:

@@ -15,6 +15,19 @@ class ServiceWrapper(PayloadType):
     file_extension = "exe"
     author = "@its_a_feature_"
     supported_os = [SupportedOS.Windows]
+    wrapper_payload_requirements = [
+        WrapperPayloadRequirement(
+            requires=WrapperPayloadRequirementRequires(
+                format=PayloadBuildMetadataFormat.Shellcode,
+                architecture=PayloadBuildMetadataArchitecture.X64,
+                os=SupportedOS.Windows,
+            ),
+            when=[WrapperPayloadRequirementWhen(
+                build_parameter_name="arch",
+                build_parameter_value="x64",
+            )]
+        )
+    ]
     wrapper = True
     wrapped_payloads = []
     note = "This is a wrapper payload that takes in Raw shellcode and generates a .NET Service binary. The service does not perform any injection."

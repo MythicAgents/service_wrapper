@@ -1,1 +1,1 @@
-mythic-container==0.5.29
+mythic-container==0.7.0rc8
